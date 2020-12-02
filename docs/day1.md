@@ -208,7 +208,7 @@ Using a thread-last pipeline, we split the input String by line, map each String
 value to an Integer, and calculate all permutations of those values given a target
 length. The `keep` function says to apply a mapping function and throw away the
 nulls, like Kotlin's `mapNotNull`. So here we say when we have a matching tuple,
-such that the values are all increasing and add to zero, return the product.
+such that the values are all increasing and add to 2020, return the product.
 Finally, returning the first (and only?) value calculated.
 
 ```clojure
