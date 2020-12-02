@@ -11,3 +11,4 @@ _Warning:_ I write long explanations. So... yeah.
 | Day # | Source | Blog Post |
 | ----- | ------ | --------- |
 | 1     | [source](src/advent_2020_clojure/day01.clj) | [blog](docs/day1.md) |
+| 2     | [source](src/advent_2020_clojure/day02.clj) | [blog](docs/day2.md) |
