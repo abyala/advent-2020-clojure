@@ -11,13 +11,13 @@ It's sledding time! Tobogganing time? I'm no longer a Yankee, so I can't tell th
 difference anymore.
 
 In this problem, we're given an infinite horizontal map of open spaces and trees,
-and a path to go down the hill. The input is a map of open spaces (periods) and
+and a path to go down a hill. The input is a map of open spaces (periods) and
 trees (hash signs), and a direction of moving right three spaces and down one,
 until we get below the input map.  As stated above, the map repeats horizontally.
 
 Usually, I start with a `parse-input` function, but I skipped that today. We'll
 just treat the input as a simple list of Strings using `(str/split-lines)`.
-However, to keep our program business-relevant, I made a simple function `tree?`
+However, to keep our program context-relevant, I made a simple function `tree?`
 to check if a given character is a tree. I also made a constant `origin` for the
 starting point. Neither of these are critical, of course, but let's be clean.
 
@@ -35,8 +35,8 @@ how to get out of it later. `iterate` has a starting point, which will be the
 `origin`. The next spot we _might_ hit requires taking the last starting point
 and adding the path, expressed as `[dx dy]`. The easiest way to add together two
 vectors is to call `(map + v1 v2)`, which in this case would be `(map + [0 0] [3 1])`.
-Because we want to add the `path` to the last execution of `iterate`, we use the
-`%` sign to represent the last value.
+As the `iterate` function feeds in the last response value as input into the 
+function, the `%` sign represents the single input into this function.
 
 Now here's some cool destructuring at work. When we add together the two vectors,
 we get back another `[x y]` vector. If the `y` value is within the map, then we
@@ -47,9 +47,9 @@ as a single unit using the `:as` keyword. The binding `[_ y :as point]` gives us
 `y` as the second value in the vector, and `point` as the entire vector, all at
 once!
 
-Finally, the function leverages `(take-while some?` around the `iterate` function
-to avoid returning an infinite sequence of `nil`s. `take-while` takes in a
-predicate to apply to a sequence, returning values until the predicate returns
+Finally, the function leverages `(take-while some?)` around the `iterate` function
+to avoid returning an infinite sequence of `nil`s. `take-while` applies a
+predicate each value in a sequence, returning values until the predicate returns
 a non-true value. `some?` is a predicate that returns `true` when its input is
 not `nil`, so we are telling the function to take all values until we get `nil`s.
  
@@ -61,16 +61,18 @@ not `nil`, so we are telling the function to take all values until we get `nil`s
                        origin)))
 ```
 
-Now that we have a list of coordinates to hit, let's find out what's there. To 
-handle the horizontal scrolling, I could have applied the `mod` function to the
-`x` value for each point; if the width of the row is 10 characters and `x=13`,
-we could just look at the element at `x=3`. But that's no fun. Instead, this
-function takes the parsed map of tree lines, and the target coordinate, then
-it finds the correct row, and then we apply the `cycle` function. `cycle` takes
-a sequence and returns an infinite (lazy) sequence of that sequence. So now that
-the row continues forever, we can apply `nth` to grab the cell we want.
+Now that we have a list of coordinates to hit, let's find out what's at each
+coordinate. To handle the horizontal scrolling, I could have applied the `mod` 
+function to the `x` value for each point; if the width of the row is 10 
+characters and `x=13`, we could just look at the element at `x=3`. But that's no
+fun. Instead, the `value-at` function takes the parsed map of tree lines and 
+the target coordinate, then it finds the correct row, and then we apply the
+`cycle` function. `cycle` takes a sequence and returns an infinite (lazy)
+sequence that repeats the input sequence; `(cycle [1 2 3])` returns a lazy
+sequence of `(1 2 3 1 2 3 1 2...)`. So now that the row continues forever, we
+can apply `nth` to grab the cell we want.
 
-Of note is the use of the thread-first macros `->`, instead of the thread-last
+Of note is the use of the thread-first macro `->`, instead of the thread-last
 macro `->>` I've used extensively. This runs each expression in order, feeding
 the result of each expression as the _first_ parameter of the next expression,
 rather than sending it as the _last_ parameter like thread-last. In general,
@@ -112,10 +114,10 @@ input and the path of `[x=3 y=1]`.
 
 ## Part 2
 
-Part two uses the same basic logic as part 1, expect that we now want to run
+Part two uses the same basic logic as part 1, except that we now want to run
 through the map multiple times, using several paths. We look at the number of
-trees in each path, and multiple the results. Given the construction of the
-`solve` function taking in the path, this is simple.
+trees in each path, and then multiply the results together. Given the
+construction of the `solve` function accepting the path to run, this is simple.
 
 All we need to do is take each path (list of `[x y]` coordinates), map each to
 the number of trees via the `solve` function, and use `(apply *)` to multiply
