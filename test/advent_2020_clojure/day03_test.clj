@@ -8,3 +8,7 @@
 (deftest part1-test
   (is (= 7 (part1 TEST_DATA)))
   (is (= 169 (part1 PUZZLE_DATA))))
+
+(deftest part2-test
+  (is (= 336 (part2 TEST_DATA)))
+  (is (= 7560370818 (part2 PUZZLE_DATA))))
