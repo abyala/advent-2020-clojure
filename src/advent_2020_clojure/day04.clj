@@ -1,6 +1,5 @@
 (ns advent-2020-clojure.day04
-  (:require [clojure.string :as str]
-            [clojure.set :as set]))
+  (:require [clojure.string :as str]))
 
 (defn in-range? [min max s]
   (when-let [i (try (Integer/parseInt s)
