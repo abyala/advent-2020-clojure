@@ -29,18 +29,16 @@
 (defn parse-passport
   "Reads a line of text of form \"key1:value1 key2:value2\" and returns a map of each key to its value."
   [line]
-  (->> (str/split line #" ")
+  (->> (str/split line #"[\n ]")
        (map #(str/split % #":"))
        (into {})))
 
 (defn parse-input
   "Reads an entire input string and returns a sequence of passports, using blank lines as passport delimiters."
   [input]
-  (->> (str/split-lines input)
-       (partition-by #(str/blank? %))
-       (filter #(not= '("") %))
-       (map #(str/join " " %))
-       (map parse-passport)))
+  (as-> (str/replace input "\r" "") x
+        (str/split x #"\n\n")
+        (map parse-passport x)))
 
 (defn has-required-fields?
   "Returns true if the passport contains all required fields."
@@ -53,7 +51,7 @@
   "Returns true if the passport field, expressed as [k v], does not fail a data integrity check."
   [[k v]]
   (let [check (or (passport-fields k)
-                 any?)]
+                  any?)]
     (check v)))
 
 (defn passport-passes-data-integrity?

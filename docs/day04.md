@@ -20,6 +20,10 @@ latter parses the passport itself. This also makes testing with the REPL easier.
 For `parse-input`, the tricky part is dealing with the variable number of lines. There's probably a simpler solution,
 but I'm not too upset with my function.  Let's go through it line by line.
 
+***NOTE:*** The description below of `parse-input` and `parse-passport` will work and was my solution, but I've since
+found a simpler solution. My source code now shows the new functions.  See the "Revisions" section at the bottom of this
+document for details. So either skip these next two functions, or read them and then see how they changed below.
+
 1. Split the input into each line, so we get a sequence of strings. The shape of the result will be
 `("a" "b" "c" "" "d" "e" "")`.
 2. Use `partition-by` to create groupings of lines, separated by the empty lines. `partition-by`
@@ -224,3 +228,38 @@ that every mapped value has some non-`nil` value:
 ```
 
 Easy peasy!  On to day 5.
+
+---
+
+## Revisions Ideas
+
+Part of the joy of Advent Of Code is reading other folks' solutions. I saw
+[Nufflee's solution](https://github.com/Nufflee/AdventOfCode-2020/tree/master/day04) solution via Twitter with a Rust
+solution that I think is better than my original one. I'm keeping my explanation up top for historical reasons, but
+here is a much cleaner solution for parsing the input.
+
+Instead of using `partition-by` and `filter`, the idea is that `parse-input` just has to split the giant string based
+on the presence of two newlines. Now I'm coding on a Windows box, so my test String showed `\n\n` as a blank line, while
+the puzzle data showed `\r\n\r\n` as a blank line, so I accommodated for that. As a result, `parse-input` gets rid of
+all silly `\r` characters, splits the original line by `\n\n`, and then calls `parse-passport`. I could have replaced
+the remaining `\n` characters with spaces, but instead I opted to update `parse-passport` to split the input data by
+either a newline or a space.  The resulting parse logic is very clean.
+
+One implementation note for `parse-input` - I wanted to use a threading pipeline as usual, but in this case neither
+`->` nor `->>` would suffice. When calling `str/split`, the String is the first argument because the regex is second.
+But when calling `map`, the threaded sequence is the last argument instead of the first. The `as->` function shines
+here, since it defines a binding to apply to each step in the pipeline. So I bind `str/replace` to `x`, inject the
+result as `x` as the first argument in `str/split`; and then inject the result of that, again as `x`, as the last
+argument in `map`.
+
+```clojure
+(defn parse-passport [line]
+  (->> (str/split line #"[\n ]")
+       (map #(str/split % #":"))
+       (into {})))
+
+(defn parse-input [input]
+  (as-> (str/replace input "\r" "") x
+        (str/split x #"\n\n")
+        (map parse-passport x)))
+```
