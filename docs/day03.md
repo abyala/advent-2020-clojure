@@ -30,35 +30,27 @@ so we use `defn` as the combination of `def` and `fn`.
 ``` 
 
 Next, let's figure out every spot in the path that we will toboggan over. For this,
-we'll use the `iterate` function to generate an infinite sequence, and worry about
-how to get out of it later. `iterate` has a starting point, which will be the
-`origin`. The next spot we _might_ hit requires taking the last starting point
-and adding the path, expressed as `[dx dy]`. The easiest way to add together two
-vectors is to call `(map + v1 v2)`, which in this case would be `(map + [0 0] [3 1])`.
-As the `iterate` function feeds in the last response value as input into the 
-function, the `%` sign represents the single input into this function.
+we'll use the `iterate` function to generate an infinite sequence, and then figure out
+how to get out of it. `iterate` has a starting point, which will be the `origin`.
+The next spot we _might_ hit requires taking the last starting point and adding the path
+vector.  The easiest way to add together two vectors of integers is to call
+`(map + v1 v2)`, which in this case would be `(map + [0 0] [3 1])`. Since the `iterate`
+function feeds in its last value as the last parameter into its function, the `%` sign
+in `#(map + path %)` is the previous calculation.
 
-Now here's some cool destructuring at work. When we add together the two vectors,
-we get back another `[x y]` vector. If the `y` value is within the map, then we
-want to return the entire vector, but it not, we'll stop processing the `iterate`
-function by returning `nil`. What we can do is destructure the vector into its
-`x` and `y` values (well, we don't need the `x` value) _and_ retain the vector
-as a single unit using the `:as` keyword. The binding `[_ y :as point]` gives us
-`y` as the second value in the vector, and `point` as the entire vector, all at
-once!
+Then we just have to decide how many values to take out of the infinite sequence.
+`take-while` takes in a predicate and a sequence, and returns all values from the 
+sequence until the first value does not return `true` from the predicate. We only want
+the `[x y]` vectors where `y` fits within the number of tree lines. I could use defined
+the predicate as `(fn [[_ y]] (< y num-tree-lines))` but since there is only one
+parameter, we can use the `#()` short-hand and call `(second %)` to take the second
+value out of the input parameter sequence.  
 
-Finally, the function leverages `(take-while some?)` around the `iterate` function
-to avoid returning an infinite sequence of `nil`s. `take-while` applies a
-predicate each value in a sequence, returning values until the predicate returns
-a non-true value. `some?` is a predicate that returns `true` when its input is
-not `nil`, so we are telling the function to take all values until we get `nil`s.
- 
 ```clojure
 (defn target-coordinates [path num-tree-lines]
-  (take-while some?
-              (iterate #(let [[_ y :as point] (map + path %)]
-                          (when (< y num-tree-lines) point))
-                       origin)))
+  (take-while
+    #(< (second %) num-tree-lines)
+    (iterate #(map + path %) origin)))
 ```
 
 Now that we have a list of coordinates to hit, let's find out what's at each

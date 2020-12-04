@@ -5,10 +5,9 @@
 (defn tree? [c] (= c \#))
 
 (defn target-coordinates [path num-tree-lines]
-  (take-while some?
-              (iterate #(let [[_ y :as point] (map + path %)]
-                          (when (< y num-tree-lines) point))
-                       origin)))
+  (take-while
+    #(< (second %) num-tree-lines)
+    (iterate #(map + path %) origin)))
 
 (defn value-at [tree-lines row col]
   (-> (tree-lines row)
@@ -29,6 +28,5 @@
   (solve input part1-path))
 
 (defn part2 [input]
-  (->> part2-paths
-       (map (partial solve input))
+  (->> (map (partial solve input) part2-paths)
        (apply *)))
