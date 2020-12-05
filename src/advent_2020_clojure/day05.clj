@@ -2,29 +2,18 @@
   (:require [clojure.string :as str]))
 
 (defn split-seat [seat] (split-at 7 seat))
-(defn low-instruction? [c] (#{\F \L} c))
+(defn to-binary-digit [c] (if (#{\F \L} c) 0 1))
 
-(defn midpoint [low high]
-  (-> (- high low) (/ 2) (+ low)))
-
-(defn binary-space-partition [num-vals instructions]
-  (->> (reduce (fn [[low high] dir]
-                 (let [midpoint (midpoint low high)]
-                   (if (low-instruction? dir) [low midpoint] [midpoint high])))
-               [0 num-vals]
-               instructions)
-       first))
-
-(defn find-row [instructions]
-  (binary-space-partition 128 instructions))
-
-(defn find-column [instructions]
-  (binary-space-partition 8 instructions))
+(defn binary-space-partition [instructions]
+  (as-> instructions x
+        (map to-binary-digit x)
+        (apply str x)
+        (Integer/parseInt x 2)))
 
 (defn seat-id [seat]
   (let [[r c] (split-seat seat)]
-    (-> (* (find-row r) 8)
-        (+ (find-column c)))))
+    (-> (* (binary-space-partition r) 8)
+        (+ (binary-space-partition c)))))
 
 (defn missing-within-collection [coll]
   (reduce (fn [prev v]

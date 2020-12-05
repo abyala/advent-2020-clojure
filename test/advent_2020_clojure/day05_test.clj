@@ -4,19 +4,14 @@
 
 (def PUZZLE_DATA (slurp "resources/day05_data.txt"))
 
-(deftest midpoint-test
-  (is (= 64 (midpoint 0 128)))
-  (is (= 32 (midpoint 0 64)))
-  (is (= 96 (midpoint 64 128))))
-
-(deftest find-row-test
-  (is (= 70 (find-row "BFFFBBF")))
-  (is (= 14 (find-row "FFFBBBF")))
-  (is (= 102 (find-row "BBFFBBF"))))
-
-(deftest find-column-test
-  (is (= 7 (find-column "RRR")))
-  (is (= 4 (find-column "RLL"))))
+(deftest binary-space-partition-test
+  (testing "Row examples"
+    (is (= 70 (binary-space-partition "BFFFBBF")))
+    (is (= 14 (binary-space-partition "FFFBBBF")))
+    (is (= 102 (binary-space-partition "BBFFBBF"))))
+  (testing "Column examples"
+    (is (= 7 (binary-space-partition "RRR")))
+    (is (= 4 (binary-space-partition "RLL")))))
 
 (deftest seat-id-test
   (is (= 567 (seat-id "BFFFBBFRRR")))
