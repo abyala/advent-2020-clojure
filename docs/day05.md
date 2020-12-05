@@ -123,3 +123,22 @@ of seat IDs.  This should wrap everything up cleanly.
 (defn part2 [input]
   (apply-to-seat-ids input missing-within-collection))
 ```
+
+---
+
+## Revisions Ideas
+
+So it turns out that this problem is even easier than I thought. The `seat-id` algorithm multiplies 8 to the calculated
+row value as binary. 8 is `2^3`, and the columns are three digits too.  Soo instead of splitting the rows and columns,
+we can calculate the entire `seat-id` by sending it to `binary-space-partition`. We can entirely remove the
+`split-seat` and `seat-id` functions and, and rewrite the `apply-to-seat-ids` function as follows:
+
+```clojure
+(defn apply-to-seat-ids [input f]
+  (->> (str/split-lines input)
+       (map binary-space-partition)
+       f))
+```
+
+I'll leave my existing code as-is, but this is a clever simplification. Thanks to
+[Todd Ginsberg](https://twitter.com/ToddGinsberg) for this clever idea.
