@@ -2,29 +2,45 @@
   (:require [clojure.string :as str]))
 
 (defn split-seat [seat] (split-at 7 seat))
+(defn low-instruction? [c] (#{\F \L} c))
 
-(defn get-row [front]
-  (first (reduce (fn [[min max] dir]
-                       (let [midpoint (+ min (/ (- max min) 2))]
-                         (if (= \F dir) [min midpoint]
-                                        [midpoint max])))
-                     [0 128]
-                     front)))
+(defn midpoint [low high]
+  (-> (- high low) (/ 2) (+ low)))
 
-(defn get-column [back]
-  (first (reduce (fn [[min max] dir]
-                   (let [midpoint (+ min (/ (- max min) 2))]
-                     (if (= \L dir) [min midpoint]
-                                    [midpoint max])))
-                 [0 8]
-                 back)))
+(defn binary-space-partition [num-vals instructions]
+  (->> (reduce (fn [[low high] dir]
+                 (let [midpoint (midpoint low high)]
+                   (if (low-instruction? dir) [low midpoint] [midpoint high])))
+               [0 num-vals]
+               instructions)
+       first))
+
+(defn find-row [instructions]
+  (binary-space-partition 128 instructions))
+
+(defn find-column [instructions]
+  (binary-space-partition 8 instructions))
 
 (defn seat-id [seat]
-  (let [[front back] (split-seat seat)]
-    (-> (* (get-row front) 8)
-        (+ (get-column back)))))
+  (let [[r c] (split-seat seat)]
+    (-> (* (find-row r) 8)
+        (+ (find-column c)))))
 
-(defn part1 [input]
+(defn missing-within-collection [coll]
+  (reduce (fn [prev v]
+            (let [target (inc prev)]
+              (if (= v target)
+                v
+                (reduced target))))
+          (sort coll)))
+
+(defn apply-to-seat-ids [input f]
   (->> (str/split-lines input)
        (map seat-id)
-       (apply max)))
+       f))
+
+(defn part1 [input]
+  (apply-to-seat-ids input (partial apply max)))
+
+(defn part2 [input]
+  (apply-to-seat-ids input missing-within-collection))
