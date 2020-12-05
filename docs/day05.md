@@ -1,4 +1,4 @@
-# Day Five: 
+# Day Five: Binary Boarding
 
 * [Problem statement](https://adventofcode.com/2020/day/5)
 * [Solution code](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/day05.clj)
