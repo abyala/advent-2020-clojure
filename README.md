@@ -15,3 +15,4 @@ _Warning:_ I write long explanations. So... yeah.
 | 3     | [source](src/advent_2020_clojure/day03.clj) | [blog](docs/day03.md) |
 | 4     | [source](src/advent_2020_clojure/day04.clj) | [blog](docs/day04.md) |
 | 5     | [source](src/advent_2020_clojure/day05.clj) | [blog](docs/day05.md) |
+| 6     | [source](src/advent_2020_clojure/day06.clj) | [blog](docs/day06.md) |

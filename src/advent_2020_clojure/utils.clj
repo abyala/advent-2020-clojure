@@ -11,8 +11,8 @@
   blank string. This function preserves any newlines between blank lines, and it filters
   out Windows' \"\r\" characters."
   [input]
-  (as-> (str/replace input "\r" "") x
-        (str/split x #"\n\n")))
+  (-> (str/replace input "\r" "")
+      (str/split #"\n\n")))
 
 (defn split-blank-line-seq
   "Given an input string, returns a sequence of vectors of strings. Completely blank
