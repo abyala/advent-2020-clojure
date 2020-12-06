@@ -1,5 +1,6 @@
 (ns advent-2020-clojure.day04
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [advent-2020-clojure.utils :as utils]))
 
 (defn in-range? [min max s]
   (when-let [i (try (Integer/parseInt s)
@@ -35,9 +36,8 @@
 (defn parse-input
   "Reads an entire input string and returns a sequence of passports, using blank lines as passport delimiters."
   [input]
-  (as-> (str/replace input "\r" "") x
-        (str/split x #"\n\n")
-        (map parse-passport x)))
+  (->> (utils/split-blank-line input)
+       (map parse-passport)))
 
 (defn has-required-fields?
   "Returns true if the passport contains all required fields."
