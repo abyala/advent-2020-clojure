@@ -1,69 +1,34 @@
 (ns advent-2020-clojure.day08
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [advent-2020-clojure.game-console :as game]))
 
-; State: {:offset n
-;         :acc x
-;         :instructions [[cmd args]]}
-
-(defn parse-console [input]
-  {:offset       0
-   :acc          0
-   :instructions (->> (str/split-lines input)
-                      (mapv #(str/split % #" ")))})
-
-(defn parse-num [s]
-  (->> (subs s 1)
-       (Integer/parseInt)
-       (* (if (= \+ (first s)) 1 -1))))
-
-(defn move-offset
-  ([state] (move-offset state 1))
-  ([state n] (update state :offset + n)))
-
-(defn op-nop [state & _] (move-offset state))
-(defn op-acc [state arg]
-  (-> state
-      (update :acc + (parse-num arg))
-      move-offset))
-(defn op-jmp [state arg]
-  (move-offset state (parse-num arg)))
-
-(defn run-next-op [state]
-  (when (< (state :offset) (count (state :instructions)))
-    (let [[ins arg] (-> state :instructions (nth (state :offset)))]
-      (case ins
-        "nop" (op-nop state arg)
-        "acc" (op-acc state arg)
-        "jmp" (op-jmp state arg)))))
+(defn parse-input [input]
+  (game/init-console (->> (str/split-lines input)
+                          (mapv #(str/split % #" ")))))
 
 (defn run-to-completion [state]
-  (first (->> (iterate (fn [[s seen _]]
-                         [(run-next-op s) (conj seen (:offset s)) s])
-                       [state #{} nil])
-              (map (fn [[s seen prev]]
-                     (cond
-                       (nil? s) {:status :terminated, :state prev}
-                       (contains? seen (:offset s)) {:status :loop, :state s}
-                       :else {:status :running, :state s})))
-              (filter #(not= :running (:status %))))))
+  (loop [s state seen #{}]
+    (let [{:keys [offset] :as next-state} (game/run-next-op s)]
+      (cond
+        (nil? next-state) {:status :terminated, :state s}
+        (seen offset) {:status :loop, :state next-state}
+        :else (recur next-state (conj seen offset))))))
 
 (defn part1 [input]
-  (let [state (parse-console input)]
-    (->> (iterate (fn [[s seen]]
-                    [(run-next-op s) (conj seen (:offset s))])
-                  [state #{}])
-         (filter (fn [[s seen]] (contains? seen (:offset s))))
-         ffirst
-         :acc)))
+  (-> (parse-input input)
+       run-to-completion
+       (get-in [:state :acc])))
+
+(defn alternate-instructions [instructions]
+  (keep-indexed (fn [idx [op]]
+                  (when-let [next-op ({"jmp" "nop" "nop" "jmp"} op)]
+                    (assoc-in instructions [idx 0] next-op)))
+                instructions))
 
 (defn part2 [input]
-  (let [state (parse-console input)
-        possible-states (->> (:instructions state)
-                             (keep-indexed (fn [idx [op]]
-                                             (when-let [next-op ({"jmp" "nop" "nop" "jmp"} op)]
-                                               (assoc-in state [:instructions idx 0] next-op)))))]
-    (->> possible-states
-         (map run-to-completion)
+  (let [{:keys [instructions] :as state} (parse-input input)]
+    (->> (alternate-instructions instructions)
+         (map #(run-to-completion (assoc state :instructions %)))
          (keep (fn [{:keys [status state]}]
                  (when (= :terminated status) (:acc state))))
          first)))
