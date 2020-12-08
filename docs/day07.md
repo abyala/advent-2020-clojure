@@ -1,7 +1,7 @@
 # Day Seven: Handy Haversacks
 
-* [Problem statement](https://adventofcode.com/2020/day/6)
-* [Solution code](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/day06.clj)
+* [Problem statement](https://adventofcode.com/2020/day/7)
+* [Solution code](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/day07.clj)
 
 ---
 
