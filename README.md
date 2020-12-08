@@ -16,3 +16,4 @@ _Warning:_ I write long explanations. So... yeah.
 | 4     | [source](src/advent_2020_clojure/day04.clj) | [blog](docs/day04.md) |
 | 5     | [source](src/advent_2020_clojure/day05.clj) | [blog](docs/day05.md) |
 | 6     | [source](src/advent_2020_clojure/day06.clj) | [blog](docs/day06.md) |
+| 6     | [source](src/advent_2020_clojure/day07.clj) | [blog](docs/day07.md) |
