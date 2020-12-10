@@ -1,6 +1,6 @@
 # Day Nine: Encoding Error
 
-* [Problem statement](https://adventofcode.com/2020/day/8)
+* [Problem statement](https://adventofcode.com/2020/day/9)
 * [Solution code](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/day09.clj)
 
 ---

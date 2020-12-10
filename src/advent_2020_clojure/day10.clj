@@ -4,29 +4,23 @@
 (defn parse-jolts [input]
   (->> (str/split-lines input)
        (map #(Integer/parseInt %))
-       (cons 0)
-       sort))
+       (cons 0)))
 
 (defn part1 [input]
-  (let [{ones 1 threes 3} (->> (parse-jolts input)
-                               (partition 2 1)
-                               (map #(- (second %) (first %)))
+  (let [jolts (-> input parse-jolts sort)
+        {ones 1 threes 3} (->> (map - (rest jolts) jolts)
                                frequencies)]
     (* ones (inc threes))))
 
-(defn incr-all-by [m [k & ks] amount]
-  (cond
-    (nil? k) m
-    (m k) (incr-all-by (update m k + amount) ks amount)
-    :else (incr-all-by m ks amount)))
+(defn paths-from [jolts]
+  (let [rev (sort-by - jolts)]
+    (reduce (fn [acc n]
+              (->> (map + [1 2 3] (repeat n))
+                   (keep #(acc %))
+                   (apply +)
+                   (assoc acc n)))
+            {(first rev) 1}
+            (rest rev))))
 
 (defn part2 [input]
-  (let [jolts (-> input parse-jolts reverse)]
-    (loop [[j & js] jolts
-           paths (-> jolts (zipmap (repeat 0)) (assoc j 1))]
-      (if (zero? j)
-        (paths 0)
-        (recur js
-               (incr-all-by paths
-                            (map (partial - j) [1 2 3])
-                            (paths j)))))))
+  (-> (parse-jolts input) paths-from (get 0)))
