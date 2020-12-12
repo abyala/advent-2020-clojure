@@ -21,3 +21,4 @@ _Warning:_ I write long explanations. So... yeah.
 |  9    | [source](src/advent_2020_clojure/day09.clj) | [blog](docs/day09.md) |
 | 10    | [source](src/advent_2020_clojure/day10.clj) | [blog](docs/day10.md) |
 | 11    | [source](src/advent_2020_clojure/day11.clj) | [blog](docs/day11.md) |
+| 12    | [source](src/advent_2020_clojure/day12.clj) | [blog](docs/day12.md) |

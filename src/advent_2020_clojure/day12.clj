@@ -14,9 +14,10 @@
                   :south [0 1]
                   :east  [1 0]
                   :west  [-1 0]})
+
 (defn move [[[x y] dir] amt]
   (->> (dir-amounts dir)
-       (mapv * (repeat amt))
+       (mapv * [amt amt])
        (mapv + [x y])))
 
 (defn next-state [[[x y] dir :as state] line]
