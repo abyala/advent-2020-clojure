@@ -1,6 +1,12 @@
 (ns advent-2020-clojure.utils
   (:require [clojure.string :as str]))
 
+(defn abs [v]
+  (if (neg? v) (- v) v))
+
+(defn mapv-indexed [f col]
+  (->> (map-indexed f col) vec))
+
 (defn xor
   "Given a collection, returns true if exactly one element resolves to \"true\""
   [f coll]
