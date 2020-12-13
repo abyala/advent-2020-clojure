@@ -16,10 +16,27 @@
            (map (fn [[id start]] (* id (- start earliest))))
            first))))
 
-(defn part2 [input]
+(defn part2-cheater [input]
   (let [lines (str/split-lines input)
         demands (->> (str/split (second lines) #",")
                      (keep-indexed (fn [idx v] (when (not= v "x") [idx (Integer/parseInt v)])))
                      (into {}))]
     (->> (map (fn [[idx v]] (str "(t + " idx ") mod " v " = 0")) demands)
          (str/join ", "))))
+
+(defn part2-thank-you-todd [input]
+  (let [lines (str/split-lines input)
+        busses (->> (str/split (second lines) #",")
+                    (keep-indexed (fn [idx v] (when (not= v "x")
+                                                [idx (Integer/parseInt v)]))))]
+    (loop [step-size (-> busses first second)
+           time 0
+           [[idx bus] & other-busses] (rest busses)]
+      (if (nil? bus)
+        time
+        (recur (* step-size bus)
+               (->> (iterate (partial + step-size) time)
+                    (filter #(zero? (-> (+ idx %) (mod bus))))
+                    first)
+               other-busses))))
+  )

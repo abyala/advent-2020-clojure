@@ -82,3 +82,12 @@ tuple of its index and its value. Then I just mapped each value using `map` and 
     (->> (map (fn [[idx v]] (str "(t + " idx ") mod " v " = 0")) demands)
          (str/join ", "))))
 ```
+
+---
+
+## Part 2 Actual Code
+
+My friend Todd Ginsberg actually
+[solved this program without the Chinese Remainder Theorem by name](https://todd.ginsberg.com/post/advent-of-code/2020/day13/),
+and his write-up is fantastic. So I took his implementation and coded it up in Clojure-ish style. Nicely
+done, Todd!

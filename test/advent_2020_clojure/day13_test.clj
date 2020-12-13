@@ -13,4 +13,6 @@
  problem. Plug the following into wolframalpha.com:")
 (println (part2 PUZZLE_DATA))
 
-; ANSWER: 807435693182510
+(deftest part2-thank-you-todd-test
+  (is (= 1068781 (part2-thank-you-todd TEST_DATA)))
+  (is (= 807435693182510 (part2-thank-you-todd PUZZLE_DATA))))
