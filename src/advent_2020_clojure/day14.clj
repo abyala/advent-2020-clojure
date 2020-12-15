@@ -1,68 +1,58 @@
 (ns advent-2020-clojure.day14
   (:require [clojure.string :as str]))
 
-; State: {:mask "", :memory {n v}}
-
+; State: {:mask "", :memory {"n" v}}
 (def empty-mask "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-(def empty-state
-  {:mask empty-mask :memory {}})
+(def empty-state {:mask empty-mask :memory {}})
 
-; NOTE: This should take in a String, not a number...
-(defn pad-n [n]
-  (let [binary (Long/toBinaryString n)
-        pad (apply str (take (- 36 (count binary))
-                             (repeat \0)))]
-    (str pad binary)))
+(defn zero-pad [s]
+  (let [space-padded (->> s Long/parseLong Long/toBinaryString (format "%36s"))]
+    (str/replace space-padded \space \0)))
+
 (defn binary-to-long [b]
   (Long/parseLong b 2))
 
-(defn mask-n [n mask]
-  (->> (map (fn [m v] (if (= \X m) v m))
-            mask
-            (pad-n n))
+(defn mask-value [v mask]
+  (->> (zero-pad v)
+       (map (fn [m v] (if (= \X m) v m)) mask)
        (apply str)
        binary-to-long))
 
-(defn process-line [line state]
-  (condp re-matches line
-    #"mask = (\w+)" :>> (fn [[_ mask]] (assoc state :mask mask))
-    #"mem\[(\d+)\] = (\d+)" :>> (fn [[_ loc v]] (assoc-in state [:memory (Long/parseLong loc)]
-                                                          (mask-n (Long/parseLong v) (:mask state))))))
+(defn update-mask [state mask]
+  (assoc state :mask mask))
 
-(defn part1 [input]
-  (loop [[line & next-lines] (str/split-lines input), state empty-state]
-    (if-not line
-      (->> (:memory state) vals (apply +))
-      (recur next-lines (process-line line state)))))
+(defn set-bitmasked-value [state addr v]
+  (assoc-in state [:memory addr] (mask-value v (:mask state))))
 
-; TODO: Change to a char array
 (defn floating-addresses [s]
-  (if-let [idx (str/index-of s \X)]
-    (into (floating-addresses (apply str (assoc (vec s) idx 0)))
-          (floating-addresses (apply str (assoc (vec s) idx 1))))
-    (list s)))
+  (if-not (str/index-of s \X)
+    (list s)
+    (mapcat #(floating-addresses (str/replace-first s \X %))
+            [\0 \1])))
 
-(defn convert-address-to-masked-addresses [address mask]
-  (let [binary (pad-n (Long/parseLong address))]
-    (->> (map (fn [m v] (if (= m \0) v m))
-              mask
-              binary)
-         (apply str)
-         floating-addresses)))
+(defn masked-addresses [address mask]
+  (->> (zero-pad address)
+       (map (fn [m v] (if (= m \0) v m)) mask)
+       (apply str)
+       floating-addresses))
 
-(defn process-line2 [line state]
+(defn set-bitmasked-addresses [state addr v]
+  (->> (:mask state)
+       (masked-addresses addr)
+       (map #(vector % (Integer/parseInt v)))
+       (update state :memory (partial into))))
+
+(defn process-line [line state mem-command]
   (condp re-matches line
-    #"mask = (\w+)" :>> (fn [[_ mask]] (assoc state :mask mask))
-    #"mem\[(\d+)\] = (\d+)" :>> (fn [[_ loc v]]
-                                  (let [all-addresses (convert-address-to-masked-addresses loc (:mask state))]
-                                    (->> all-addresses
-                                         (map binary-to-long)
-                                         (map #(vector % (Integer/parseInt v)))
-                                         (into (:memory state))
-                                         (assoc state :memory))))))
+    #"mask = (\w+)" :>> (fn [[_ mask]] (update-mask state mask))
+    #"mem\[(\d+)\] = (\d+)" :>> (fn [[_ addr v]] (mem-command state addr v))))
 
-(defn part2 [input]
-  (loop [[line & next-lines] (str/split-lines input), state empty-state]
-    (if-not line
-      (->> (:memory state) vals (apply +))
-      (recur next-lines (process-line2 line state)))))
+(defn solve [input mem-command]
+  (->> (str/split-lines input)
+       (reduce #(process-line %2 %1 mem-command) empty-state)
+       :memory
+       vals
+       (apply +)))
+
+(defn part1 [input] (solve input set-bitmasked-value))
+(defn part2 [input] (solve input set-bitmasked-addresses))
