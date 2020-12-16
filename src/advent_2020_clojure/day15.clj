@@ -4,11 +4,11 @@
 (defn solve [input target]
   (let [nums (->> (str/split input #",")
                   (map-indexed (fn [idx v] [(Integer/parseInt v) (inc idx)])))
-        initial-map (into {} (butlast nums))
-        initial-spoken (-> nums last first)
+        initial-map            (into {} (butlast nums))
+        initial-spoken         (-> nums last first)
         initial-turns-finished (count nums)]
-    (loop [data initial-map,
-           last-spoken initial-spoken,
+    (loop [data           initial-map,
+           last-spoken    initial-spoken,
            turns-finished initial-turns-finished]
       (if (= target turns-finished)
         last-spoken
