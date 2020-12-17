@@ -23,6 +23,17 @@
 (defn part1 [input]
   (->> input parse-input invalid-fields (apply +)))
 
+;;;;;;; Begin part 2
+
+(defn valid-tickets-only [{:keys [nearby-tickets] :as parsed}]
+  (let [bad-fields (-> parsed invalid-fields set)]
+    (filterv (fn [t] (not-any? #(bad-fields %) t))
+             nearby-tickets)))
+
+(defn ticket-pairs [tickets]
+  (mapcat (fn [ticket] (map-indexed (fn [idx v] (vector idx v)) ticket))
+          tickets))
+
 (defn possible-indexes [ticket-pairs num-fields [name [low1 high1] [low2 high2]]]
   (->> (reduce (fn [acc [idx v]]
                  (if (or (<= low1 v high1) (<= low2 v high2))
@@ -58,16 +69,6 @@
                    (dissoc name)
                    (remove-all-traces actual-index))
                (assoc solved name actual-index))))))
-
-(defn valid-tickets-only [{:keys [nearby-tickets] :as parsed}]
-  (let [bad-fields (-> parsed invalid-fields set)]
-    (filterv (fn [t] (not-any? #(bad-fields %) t))
-             nearby-tickets)))
-
-(defn ticket-pairs [tickets]
-  (mapcat (fn [ticket] (map-indexed (fn [idx v] (vector idx v))
-                                    ticket))
-          tickets))
 
 (defn part2 [input]
   (let [{:keys [fields my-ticket] :as parsed} (parse-input input)

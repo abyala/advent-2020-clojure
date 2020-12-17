@@ -11,4 +11,3 @@
 
 (deftest part2-test
   (is (= 1307550234719 (part2 PUZZLE_DATA))))
-
