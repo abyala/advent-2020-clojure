@@ -27,3 +27,4 @@ _Warning:_ I write long explanations. So... yeah.
 | 15    | [source](src/advent_2020_clojure/day15.clj) | [blog](docs/day15.md) |
 | 16    | [source](src/advent_2020_clojure/day16.clj) | [blog](docs/day16.md) |
 | 17    | [source](src/advent_2020_clojure/day17.clj) | [blog](docs/day17.md) |
+| 18    | [source](src/advent_2020_clojure/day18.clj) | [blog](docs/day18.md) |
