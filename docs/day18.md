@@ -132,8 +132,8 @@ of this limitation!
           (calculate operations)))))
 ```
 
-At this point, we've handled parentheses and identity, so it's time to handle addition and
-subtraction. Let's make a little function called `simple-math` that takes in a vector and
+At this point, we've handled parentheses and single element vectors, so it's time to handle addition and
+multiplication. Let's make a little function called `simple-math` that takes in a vector and
 the index of the operation, and it returns a reduced vector having applied the operation
 to the values on either side. Nothing fancy here.
 
