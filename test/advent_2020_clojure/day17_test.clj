@@ -11,4 +11,4 @@
 
 (deftest part2-test
   (is (= 848 (part2 TEST_DATA)))
-  (is (= -1 (part2 PUZZLE_DATA))))
+  (is (= 2192 (part2 PUZZLE_DATA))))
