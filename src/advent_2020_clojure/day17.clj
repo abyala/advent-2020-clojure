@@ -25,15 +25,13 @@
             [(dec (apply min values)) (inc (apply max values))]))
         [0 1 2 3]))
 
-(defn inclusive-range [[low high]]
-  (range low (inc high)))
-
 (defn points-in-cube [[cube-x cube-y cube-z cube-w]]
-  (for [x (inclusive-range cube-x)
-        y (inclusive-range cube-y)
-        z (inclusive-range cube-z)
-        w (inclusive-range cube-w)]
-    [x y z w]))
+  (letfn [(inclusive-range [[low high]] (range low (inc high)))]
+    (for [x (inclusive-range cube-x)
+          y (inclusive-range cube-y)
+          z (inclusive-range cube-z)
+          w (inclusive-range cube-w)]
+      [x y z w])))
 
 (defn num-active-neighbors [active-points neighbor-fn point]
   (->> (neighbor-fn point)
