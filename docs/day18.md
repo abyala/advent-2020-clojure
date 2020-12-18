@@ -26,9 +26,10 @@ line as a sequence of tokens, and I need to decide whether to take action on any
 Let's parse the data. I want to take a String like `1 + (2 * (3 * 4) + 5)` and see it as a simple vector of
 values. The parentheses are always next to a number, but everything else is space delimited. For the numeric
 strings, let's turn them into `BigInteger`s right away, since we'll get overflow if we use `Long`s. The regex
-is a little ugly, but it's not bad. If I put in artifical spaces, you can see it's essentially one big `or`,
-and `re-seq` returns a sequence of tokens that match the regex.  The `mapv` only attempts to parse values
-that aren't symbols; in theory, I could have done a try-catch parse for each token instead.
+is a little ugly, but it's not bad. If I put in artifical spaces to get `\d+ | \( | \) | \*`, you can see
+it's essentially one big `or`, and `re-seq` returns a sequence of tokens that match the regex.  The `mapv`
+only attempts to parse values that aren't symbols; in theory, I could have done a try-catch parse for each
+token instead.
 
 I won't spend any time going over [Clojure-Java interop](https://clojure.org/reference/java_interop), but
 suffice it to say that `(BigInteger. "123")`, with that extra period, calls the constructor of `BigInteger`
