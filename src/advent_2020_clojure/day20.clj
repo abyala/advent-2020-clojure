@@ -4,6 +4,7 @@
             [advent-2020-clojure.utils :as utils]))
 
 (defn wave? [c] (= c \#))
+(defn board-length [board] (->> board count Math/sqrt int))
 
 (defn parse-tile [tile-str]
   (let [lines (str/split-lines tile-str)
@@ -48,13 +49,13 @@
 (defn above? [[_ grid-a] [_ grid-b]]
   (= (last grid-a) (first grid-b)))
 
-(defn corner-indexes [coll]
-  (let [size (count coll)
-        length (-> size Math/sqrt int)]
-    (list 0 (dec length) (- size length) (dec size))))
-
 (defn solve [input]
   (cube/solve-cube left-of? above? tile-permutations (parse-input input)))
+
+(defn corner-indexes [coll]
+  (let [size (count coll)
+        length (board-length coll)]
+    (list 0 (dec length) (- size length) (dec size))))
 
 (defn part1 [input]
   (let [board (solve input)]
@@ -73,8 +74,7 @@
        (map (partial apply str))))
 
 (defn board-as-string [board]
-  (let [size (count board)
-        length (-> size Math/sqrt int)]
+  (let [length (board-length board)]
     (->> board
          (map strip-border)
          (partition length)
@@ -97,7 +97,7 @@
 (defn replace-char-at [word idx c]
   (apply str (subs word 0 idx) (str c) (subs word (inc idx))))
 
-(defn murder-monster [board x y]
+(defn cloak-monster [board x y]
   (reduce (fn [b [mx my]] (update b (+ y my) #(replace-char-at % (+ x mx) \space)) )
           board
           monster))
@@ -109,7 +109,7 @@
      (cond
        (>= y (count board))         (when found? board)
        (>= x (count (first board))) (recur board 0 (inc y) found?)
-       (monster? board x y)         (recur (murder-monster board x y) (inc x) y true)
+       (monster? board x y)         (recur (cloak-monster board x y) (inc x) y true)
        :else                        (recur board (inc x) y found?)))))
 
 (defn part2 [input]
