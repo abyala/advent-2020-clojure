@@ -47,7 +47,7 @@ To solve a so-called cube, I need to pass in four pieces of data. First is a pre
 tile `B`. Third is a function that takes in a tile and returns all possible orientations of that tile. Fourth
 is the data itself, represented as a sequence of tiles.
 
-In the turtle example, `left-of-pred` would look at `(:right A)` and `(:right B)` and see if the composed turtle
+In the turtle example, `left-of-pred` would look at `(:right A)` and `(:left B)` and see if the composed turtle
 is a plausible animal. Similarly, `above-pred` would look at `(:bottom A)` and `(:top B)`. `permutation-fn` would
 return all 4 orientations of the tile. And data would be the tiles. Note that this `solve-cube` function has no
 concept of the data being applied to it.
