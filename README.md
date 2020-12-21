@@ -29,4 +29,5 @@ _Warning:_ I write long explanations. So... yeah.
 | 17    | [source](src/advent_2020_clojure/day17.clj) | [blog](docs/day17.md) |
 | 18    | [source](src/advent_2020_clojure/day18.clj) | [blog](docs/day18.md) |
 | 19    | [source](src/advent_2020_clojure/day19.clj) | TBD |
-| 20    | [source](src/advent_2020_clojure/day20.clj) | [blog](docs/day20.md) |
+| 20    | [source](src/advent_2020_clojure/day20.clj) and [cube-solver source](src/advent_2020_clojure/cube_solver.clj) | [blog](docs/day20.md) |
+| 21    | [source](src/advent_2020_clojure/day21.clj) | [blog](docs/day21.md) |
