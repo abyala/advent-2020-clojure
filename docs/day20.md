@@ -3,7 +3,7 @@
 * [Problem statement](https://adventofcode.com/2020/day/20)
 * Solution code
    * [Day 20 puzzle](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/day20.clj)
-   * [Cube Solver](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/cube-solver.clj)
+   * [Cube Solver](https://github.com/abyala/advent-2020-clojure/blob/master/src/advent_2020_clojure/cube_solver.clj)
 
 ---
 
