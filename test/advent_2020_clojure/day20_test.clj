@@ -17,6 +17,7 @@
   (is (= 20899048083289 (part1 TEST_DATA)))
   (is (= 5966506063747 (part1 PUZZLE_DATA))))
 
-#_(deftest part2-test
-  (is (=  (part2 TEST_DATA)))
-  (is (=  (part2 PUZZLE_DATA))))
+(deftest part2-test
+  (is (= 273 (part2 TEST_DATA)))
+  (is (= 1714 (part2 PUZZLE_DATA))))
+
