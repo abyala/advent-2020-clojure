@@ -1,74 +1,70 @@
-(ns advent-2020-clojure.day23
-  (:require [clojure.string :as str]))
+(ns advent-2020-clojure.day23)
 
 (defn init-cups [input]
-  (let [cup-ids (mapv #(Integer/parseInt (str %)) input)
-        data-map (->> (interleave cup-ids (-> cup-ids rest vec
-                                              (conj (first cup-ids))))
-                      (partition 2)
+  (let [cup-ids (map #(Integer/parseInt (str %)) input)
+        data-map (->> (partition 2 1 cup-ids cup-ids)
                       (map vec)
                       (into {}))]
-    {:current (first cup-ids) :cups data-map :size (count data-map)}))
+    {:current (first cup-ids) :cups data-map :size (count cup-ids)}))
 
 (defn next-cup [state id]
   (get-in state [:cups id]))
 
-(defn destination-cup [current pick1 pick2 pick3 size]
-  (->> (concat (range (dec current) 0 -1)
-               (range size 0 -1))
-       (filter #(not (#{pick1 pick2 pick3 current} %)))
-       first))
+(defn cup-seq
+  ([state] (cup-seq state (:current state)))
+  ([state lookup]
+   (let [v (next-cup state lookup)]
+     (lazy-seq (cons v (cup-seq state v))))))
 
-(defn next-turn-2 [{:keys [current cups size] :as state}]
-  (let [[_ pick1 pick2 pick3 next-current] (take 5 (iterate #(next-cup state %) current))
-        dest (destination-cup current pick1 pick2 pick3 size)
+(defn destination-cup [{:keys [current size]} disallowed]
+  (loop [v (dec current)]
+    (cond
+      (zero? v) (recur size)
+      (disallowed v) (recur (dec v))
+      :else v)))
+
+(defn next-turn [{:keys [current cups] :as state}]
+  (let [[pick1 pick2 pick3 next-current] (cup-seq state)
+        dest (destination-cup state #{pick1 pick2 pick3})
         next-dest (next-cup state dest)]
     (assoc state :current next-current
                  :cups (assoc cups current next-current
                                    dest pick1
                                    pick3 next-dest))))
 
-; *********
-; **** LATER: Make a sequence of the next values in order
-; *********
+(defn play-game [state turns]
+  (-> (iterate next-turn state)
+      (nth turns)))
 
 (defn label [state]
-  (loop [acc "" idx 1]
-    (if (= (count acc) (dec (:size state)))
-      acc
-      (let [next-idx (next-cup state idx)]
-        (recur (str acc next-idx) next-idx)))))
+  (->> (cup-seq state 1)
+       (take-while #(not= % 1))
+       (apply str)))
 
 (defn part1 [input num-turns]
-  (let [state (init-cups input)]
-    (->> (iterate next-turn-2 state)
-         (drop num-turns)
-         first
-         label)))
+  (-> (init-cups input)
+      (play-game num-turns)
+      label))
+
+(defn tail [{:keys [current cups]}]
+  (->> cups
+       (keep (fn [[k v]]
+               (when (= current v) k)))
+       first))
 
 (defn extend-cups [state max-cup]
   (let [{:keys [current cups]} state
-        tail (->> cups
-                  (keep #(when (= current (second %)) (first %)))
-                  first)
         extension-start (inc (apply max (keys cups)))
         extension-end (inc max-cup)
-        extensions (assoc (->> (interleave (range extension-start extension-end)
-                                           (range (inc extension-start) extension-end))
-                               (partition 2)
-                               (map vec)
-                               (into {}))
-                     tail extension-start
-                     max-cup current)]
+        extensions (->> (partition 2 1 [current] (range extension-start extension-end))
+                        (map vec)
+                        (into {(tail state) extension-start}))]
     (assoc state :cups (merge cups extensions)
                  :size max-cup)))
 
 (defn part2 [input max-cup num-turns]
-  (let [state (-> (init-cups input)
-                   (extend-cups max-cup))
-        answer (-> (iterate next-turn-2 state)
-                   (nth num-turns))]
-    (->> (iterate #(next-cup answer %) 1)
-         rest
+  (let [state (-> (init-cups input) (extend-cups max-cup))
+        answer (play-game state num-turns)]
+    (->> (cup-seq answer 1)
          (take 2)
          (apply *))))
