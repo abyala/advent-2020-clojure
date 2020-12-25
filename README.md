@@ -34,3 +34,4 @@ _Warning:_ I write long explanations. So... yeah.
 | 22    | [source](src/advent_2020_clojure/day22.clj) | [blog](docs/day22.md) |
 | 23    | [source](src/advent_2020_clojure/day23.clj) | [blog](docs/day23.md) |
 | 24    | [source](src/advent_2020_clojure/day24.clj) | [blog](docs/day24.md) |
+| 25    | [source](src/advent_2020_clojure/day25.clj) | [blog](docs/day25.md) |
