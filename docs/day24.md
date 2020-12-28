@@ -47,7 +47,7 @@ so we can use it with the `directions` map.
 So now we need to figure out how to walk a path of direction keywords, and this is easily accomplished
 with a simple `reduce` function. First we'll map each of the direction keywords into their `[x y]`
 offsets, and then starting from the origin `[0 0]`, we use `(mapv +)` to add the current `x` to the offset
-`y`, and the current `y` to the offset `y`.
+`x`, and the current `y` to the offset `y`.
 
 ```clojure
 (defn tile-at [path]
