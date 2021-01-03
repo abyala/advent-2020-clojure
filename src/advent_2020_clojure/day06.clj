@@ -4,9 +4,7 @@
 
 (defn sum-across-groups [input f]
   (->> (utils/split-blank-line-seq input)
-       (map (partial map set))
-       (map (partial apply f))
-       (map count)
+       (map #(->> % (map set) (apply f) count))
        (apply +)))
 
 (defn part1 [input]

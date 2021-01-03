@@ -83,3 +83,35 @@ the function to perform, and bada bing, bada boom, we're done.
 (defn part2 [input]
   (sum-across-groups input set/intersection))
 ```
+
+---
+
+## Update
+
+I was looking over my code, and I realize that `sum-across-groups` is a little confusing to look at, mostly because
+there are multiple sequential `map` functions being applied. There are several other ways to do this.
+
+First, and perhaps most simply, we can use a single `map` with a threading function. This struct ure clearly shows
+that we're taking each input, converting it to a set, applying whatever function is passed in, and counting the
+results. It's very clean to look at.
+
+```clojure
+(defn sum-across-groups [input f]
+  (->> (utils/split-blank-line-seq input)
+       (map #(->> % (map set) (apply f) count))
+       (apply +)))
+```
+
+Another option is to use the `comp` function, to compose multiple functions into one larger one. It accomplishes
+the same thing as the threading macro, but requires either using `partial` or several `# %` pairs. Also, `comp`
+reads from right to left, which when combined with `partial`, leads me to find this solution uglier than the
+thread-last solution. 
+
+```clojure
+(defn sum-across-groups [input f]
+  (->> (utils/split-blank-line-seq input)
+       (map (comp count
+                  (partial apply f)
+                  (partial map set)))
+       (apply +)))
+```
